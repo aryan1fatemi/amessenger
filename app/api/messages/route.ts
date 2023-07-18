@@ -8,11 +8,8 @@ export async function POST(
   request: Request,
 ) {
   try {
-
     const currentUser = await getCurrentUser();
-
     const body = await request.json();
-
     const {
       message,
       image,
@@ -24,6 +21,10 @@ export async function POST(
     }
 
     const newMessage = await prisma.message.create({
+      include: {
+        seen: true,
+        sender: true
+      },
       data: {
         body: message,
         image: image,
@@ -37,11 +38,7 @@ export async function POST(
           connect: {
             id: currentUser.id
           }
-        }
-      },
-      include: {
-        seen: true,
-        sender: true
+        },
       }
     });
 
